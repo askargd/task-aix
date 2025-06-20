@@ -3,9 +3,6 @@
 # Exit on any error
 set -e
 
-# Update package list
-# apt-get update -y
-
 # Install nginx
 apt-get install git nginx -y
 
@@ -38,13 +35,22 @@ systemctl start nginx
 # Clean up downloaded file
 rm -f ./amazon-cloudwatch-agent.deb
 
-# Get amazon-cloudwatch-agent.json file
-git clone https://github.com/askargd/task-aix .
-mv amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+# Move amazon-cloudwatch-agent.json configuration file to /etc/
+cd /root
+git clone https://github.com/askargd/task-aix
+cp task-aix/amazon-cloudwatch-agent.json /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+cp -f task-aix/nginx.conf /etc/nginx/sites-enabled/default
 
 # Enable and start cloudwatch agent
 systemctl start amazon-cloudwatch-agent
-systemctl enable amazon-cloudwatch-agent.json
+systemctl enable amazon-cloudwatch-agent
 
 # Launch a cron job
-(crontab -l 2>/dev/null; echo "0 15 * * * /root/archive_logs.sh") | crontab -
+chmod +x /root/task-aix/archive_logs.sh
+
+tee /etc/cron.daily/archive_logs > /dev/null << 'EOF'
+#!/bin/bash
+/bin/bash /root/task-aix/archive_logs.sh
+EOF
+
+chmod +x /etc/cron.daily/archive_logs
