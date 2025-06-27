@@ -1,0 +1,52 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "SourceBucketPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectVersionTagging",
+                "s3:GetObjectVersionAcl",
+                "s3:ListBucket",
+                "s3:GetObjectVersionForReplication",
+                "s3:GetReplicationConfiguration"
+            ],
+            "Resource": [
+                "arn:aws:s3:::logs-ec2-dev-askar011/*",
+                "arn:aws:s3:::logs-ec2-dev-askar011"
+            ]
+        },
+        {
+            "Sid": "DestinationBucketPermissions",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ReplicateObject",
+                "s3:ObjectOwnerOverrideToBucketOwner",
+                "s3:GetObjectVersionTagging",
+                "s3:ReplicateTags",
+                "s3:ReplicateDelete"
+            ],
+            "Resource": [
+                "arn:aws:s3:::logs-ec2-backup-dev-askar011/*"
+            ]
+        },
+        {
+            "Sid": "SourceBucketKMSKey",
+            "Action": [
+                "kms:Decrypt",
+                "kms:GenerateDataKey"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:kms:eu-west-3:176927891769:key/mrk-0cc282fd2abd4b178eed7e442599d963"
+        },
+        {
+            "Sid": "DestinationBucketKMSKey",
+            "Action": [
+                "kms:Encrypt",
+                "kms:GenerateDataKey"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:kms:eu-central-1:176927891769:key/eae742ba-1060-49bd-8a51-bbf861a26cfb"
+        }
+    ]
+}
