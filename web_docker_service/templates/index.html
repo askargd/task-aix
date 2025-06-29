@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+        <h1> Todo List </h1>
+        <ul>
+                {% for todo in todos %}
+                <li>
+                        <input type="checkbox" name="done" {% if todo['done'] %}checked {%endif%} onchange="this.form.submit()">
+                        
+                
+                </li>
+                {%endfor%}
+        </ul>
+{% endblock %}
